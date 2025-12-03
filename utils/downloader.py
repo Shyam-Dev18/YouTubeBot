@@ -17,11 +17,14 @@ class YouTubeDownloader:
         self.active_downloads: Dict[int, Any] = {}
         self.cookies_file = self._setup_cookies()
     
-    def _setup_cookies(self) -> Optional[str]:
-        """Setup cookies file from environment variable"""
+    def _setup_cookies(self) -> str:
+        """Setup cookies file from environment variable (REQUIRED)"""
         cookies_content = config.COOKIES_TXT
         if not cookies_content:
-            return None
+            raise ValueError(
+                "COOKIES_TXT environment variable is required but not set. "
+                "Please add your cookies.txt content to Koyeb secrets."
+            )
         
         try:
             # Ensure temp directory exists
@@ -35,8 +38,7 @@ class YouTubeDownloader:
             logger.info(f"Cookies file created at {cookies_path}")
             return cookies_path
         except Exception as e:
-            logger.warning(f"Failed to setup cookies file: {e}")
-            return None
+            raise RuntimeError(f"Failed to setup cookies file: {e}")
         
     async def get_available_resolutions(self, url: str) -> List[Dict]:
         """Get available video resolutions with size information"""
@@ -49,11 +51,8 @@ class YouTubeDownloader:
                     'no_warnings': True,
                     'extract_flat': False,
                     'socket_timeout': 30,
+                    'cookiefile': self.cookies_file,  # Required
                 }
-                
-                # Add cookies if available
-                if self.cookies_file:
-                    opts['cookiefile'] = self.cookies_file
                 
                 with yt_dlp.YoutubeDL(opts) as ydl:
                     info = ydl.extract_info(url, download=False)
@@ -237,10 +236,7 @@ class YouTubeDownloader:
                 opts = config.YDL_OPTS.copy()
                 opts['progress_hooks'] = [progress_hook]
                 opts['format'] = format_id
-                
-                # Add cookies if available
-                if self.cookies_file:
-                    opts['cookiefile'] = self.cookies_file
+                opts['cookiefile'] = self.cookies_file  # Required
                 
                 # Generate safe filename
                 safe_title = re.sub(r'[^\w\s-]', '', url.split('=')[-1] if '=' in url else url[-11:])

@@ -47,7 +47,7 @@ class Config:
     # Health check server
     HEALTH_PORT = int(os.getenv("PORT", 8080))
     
-    # Cookies for yt-dlp (optional, for age-restricted or member-only videos)
+    # Cookies for yt-dlp (REQUIRED - must be set in environment)
     COOKIES_TXT = os.getenv("COOKIES_TXT", "")
     
 config = Config()
