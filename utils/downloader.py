@@ -15,6 +15,28 @@ class YouTubeDownloader:
     def __init__(self):
         self.executor = ThreadPoolExecutor(max_workers=3)
         self.active_downloads: Dict[int, Any] = {}
+        self.cookies_file = self._setup_cookies()
+    
+    def _setup_cookies(self) -> Optional[str]:
+        """Setup cookies file from environment variable"""
+        cookies_content = config.COOKIES_TXT
+        if not cookies_content:
+            return None
+        
+        try:
+            # Ensure temp directory exists
+            os.makedirs(config.TEMP_DIR, exist_ok=True)
+            
+            # Write cookies to temp file
+            cookies_path = os.path.join(config.TEMP_DIR, 'cookies.txt')
+            with open(cookies_path, 'w', encoding='utf-8') as f:
+                f.write(cookies_content)
+            
+            logger.info(f"Cookies file created at {cookies_path}")
+            return cookies_path
+        except Exception as e:
+            logger.warning(f"Failed to setup cookies file: {e}")
+            return None
         
     async def get_available_resolutions(self, url: str) -> List[Dict]:
         """Get available video resolutions with size information"""
@@ -28,6 +50,10 @@ class YouTubeDownloader:
                     'extract_flat': False,
                     'socket_timeout': 30,
                 }
+                
+                # Add cookies if available
+                if self.cookies_file:
+                    opts['cookiefile'] = self.cookies_file
                 
                 with yt_dlp.YoutubeDL(opts) as ydl:
                     info = ydl.extract_info(url, download=False)
@@ -211,6 +237,10 @@ class YouTubeDownloader:
                 opts = config.YDL_OPTS.copy()
                 opts['progress_hooks'] = [progress_hook]
                 opts['format'] = format_id
+                
+                # Add cookies if available
+                if self.cookies_file:
+                    opts['cookiefile'] = self.cookies_file
                 
                 # Generate safe filename
                 safe_title = re.sub(r'[^\w\s-]', '', url.split('=')[-1] if '=' in url else url[-11:])
