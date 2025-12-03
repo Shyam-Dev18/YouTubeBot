@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Session files
+*.session
+*.session-journal
+
+# Temporary files
+temp/
+*.tmp
+*.log
+
+# Environment variables (use Koyeb secrets)
+.env
+.env.local
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+README.md
+docs/
+
+# Tests
+test.py
+tests/
+*.test.py
+
+# OS
+.DS_Store
+Thumbs.db
