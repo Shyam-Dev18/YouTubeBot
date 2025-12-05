@@ -48,6 +48,7 @@ class Config:
     HEALTH_PORT = int(os.getenv("PORT", 8080))
     
     # Cookies for yt-dlp (REQUIRED - must be set in environment)
-    COOKIES_TXT = os.getenv("COOKIES_TXT", "")
+    #COOKIES_TXT = os.getenv("/youtubecookie.txt", "")
+    COOKIES_TXT = os.getenv("YOUTUBECOOKIE_TXT", "/youtubecookie.txt")
     
 config = Config()
