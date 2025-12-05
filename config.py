@@ -50,5 +50,7 @@ class Config:
     # Cookies for yt-dlp (REQUIRED - must be set in environment)
     #COOKIES_TXT = os.getenv("/youtubecookie.txt", "")
     COOKIES_TXT = os.getenv("YOUTUBECOOKIE_TXT", "/youtubecookie.txt")
+    print("COOKIE: ", COOKIES_TXT)
     
 config = Config()
+
