@@ -12,6 +12,24 @@ A powerful Telegram bot for downloading YouTube videos with progress tracking an
 - 📺 Channel promotion button
 - ❌ Cancel option at every step
 
+## ⚠️ Important: Cookies Required
+
+This bot **requires** a `cookies.txt` file to work with YouTube. The file must be placed in the root directory.
+
+### How to get cookies.txt:
+
+1. Install a browser extension:
+   - Chrome/Edge: [Get cookies.txt LOCALLY](https://chrome.google.com/webstore/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc)
+   - Firefox: [cookies.txt](https://addons.mozilla.org/en-US/firefox/addon/cookies-txt/)
+
+2. Go to [YouTube](https://www.youtube.com) and make sure you're logged in
+
+3. Click the extension icon and export cookies
+
+4. Save the file as `cookies.txt` in the bot's root directory
+
+**Note:** Without a valid `cookies.txt` file, the bot will not start.
+
 ## Deployment on Koyeb
 
 ### Prerequisites
@@ -109,6 +127,10 @@ pip install -r requirements.txt
 # Create .env file
 cp .env.example .env
 # Add your credentials to .env
+
+# IMPORTANT: Add cookies.txt file
+# Export YouTube cookies using browser extension (see above)
+# Place cookies.txt in root directory
 
 # Run bot
 python bot.py

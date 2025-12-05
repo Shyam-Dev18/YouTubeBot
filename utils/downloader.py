@@ -15,30 +15,25 @@ class YouTubeDownloader:
     def __init__(self):
         self.executor = ThreadPoolExecutor(max_workers=3)
         self.active_downloads: Dict[int, Any] = {}
-        self.cookies_file = self._setup_cookies()
+        self._validate_cookies_file()
     
-    def _setup_cookies(self) -> str:
-        """Setup cookies file from environment variable (REQUIRED)"""
-        cookies_content = config.COOKIES_TXT
-        if not cookies_content:
-            raise ValueError(
-                "COOKIES_TXT environment variable is required but not set. "
-                "Please add your cookies.txt content to Koyeb secrets."
+    def _validate_cookies_file(self):
+        """Validate that cookies.txt file exists"""
+        if not os.path.exists(config.COOKIES_FILE):
+            raise FileNotFoundError(
+                f"ERROR: '{config.COOKIES_FILE}' file not found!\n"
+                f"The cookies.txt file is REQUIRED for this bot to work.\n"
+                f"Please create a cookies.txt file in the root directory."
             )
         
-        try:
-            # Ensure temp directory exists
-            os.makedirs(config.TEMP_DIR, exist_ok=True)
-            
-            # Write cookies to temp file
-            cookies_path = os.path.join(config.TEMP_DIR, 'cookies.txt')
-            with open(cookies_path, 'w', encoding='utf-8') as f:
-                f.write(cookies_content)
-            
-            logger.info(f"Cookies file created at {cookies_path}")
-            return cookies_path
-        except Exception as e:
-            raise RuntimeError(f"Failed to setup cookies file: {e}")
+        # Check if file is empty
+        if os.path.getsize(config.COOKIES_FILE) == 0:
+            raise ValueError(
+                f"ERROR: '{config.COOKIES_FILE}' file is empty!\n"
+                f"Please add valid YouTube cookies to the file."
+            )
+        
+        logger.info(f"✅ Cookies file found: {config.COOKIES_FILE}")
         
     async def get_available_resolutions(self, url: str) -> List[Dict]:
         """Get available video resolutions with size information"""
@@ -51,7 +46,7 @@ class YouTubeDownloader:
                     'no_warnings': True,
                     'extract_flat': False,
                     'socket_timeout': 30,
-                    'cookiefile': self.cookies_file,  # Required
+                    'cookiefile': config.COOKIES_FILE,
                 }
                 
                 with yt_dlp.YoutubeDL(opts) as ydl:
@@ -236,7 +231,7 @@ class YouTubeDownloader:
                 opts = config.YDL_OPTS.copy()
                 opts['progress_hooks'] = [progress_hook]
                 opts['format'] = format_id
-                opts['cookiefile'] = self.cookies_file  # Required
+                opts['cookiefile'] = config.COOKIES_FILE
                 
                 # Generate safe filename
                 safe_title = re.sub(r'[^\w\s-]', '', url.split('=')[-1] if '=' in url else url[-11:])

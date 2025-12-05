@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from pathlib import Path
 
 load_dotenv()
 
@@ -14,6 +15,13 @@ class Config:
     
     # YT-DLP formats for H.264 + AAC
     YDL_FORMATS = "bestvideo[ext=mp4][vcodec^=avc1]+bestaudio[ext=m4a]/bestvideo[ext=mp4][vcodec^=avc]+bestaudio[ext=m4a]/bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"
+
+    # Cookies file (REQUIRED - must exist)
+    COOKIES_FILE = "/cookies.txt"
+    if Path(COOKIES_FILE).is_file():
+        print(f"✅ YouTube cookies file detected at: {COOKIES_FILE}")
+    else:
+        print(f"❌ Cookies file not found at: {COOKIES_FILE}")
     
     # YT-DLP options for merging without re-encoding
     YDL_OPTS = {
@@ -47,10 +55,6 @@ class Config:
     # Health check server
     HEALTH_PORT = int(os.getenv("PORT", 8080))
     
-    # Cookies for yt-dlp (REQUIRED - must be set in environment)
-    #COOKIES_TXT = os.getenv("/youtubecookie.txt", "")
-    COOKIES_TXT = os.getenv("YOUTUBECOOKIE_TXT", "/youtubecookie.txt")
-    print("COOKIE: ", COOKIES_TXT)
     
 config = Config()
 
